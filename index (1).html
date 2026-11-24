@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2F5D62"><title>How round is your life? | Wheel of Life</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Tamil","Segoe UI",Roboto,sans-serif;background:#F3EEE6;color:#3b2f2f;min-height:100vh}
+#app{max-width:480px;margin:auto;padding:14px 14px 40px}
+h1{font-size:1.5rem;margin:.3em 0}h2{font-size:1.15rem;margin:.2em 0}
+.top{display:flex;justify-content:space-between;align-items:center}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 16px;background:#2F5D62;color:#fff;font-weight:700}
+button.g{background:#fff;color:#2F5D62;border:2px solid #cfc6b8}
+button.big{width:100%;font-size:1.1rem;padding:15px;margin-top:10px}
+.card{background:#fff;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 4px 14px #0001}
+.tilt{perspective:700px}.w{width:100%;display:block;animation:fl 6s ease-in-out infinite;filter:drop-shadow(0 8px 8px #0002)}
+@keyframes fl{50%{transform:rotateX(8deg) rotateY(-4deg)}}
+.f{animation:gr .7s cubic-bezier(.3,1.4,.5,1) both;transform-origin:150px 150px}
+@keyframes gr{from{transform:scale(0)}}
+.pulse{animation:pu 1.6s infinite}@keyframes pu{50%{opacity:.5}}
+.bar{height:8px;background:#fff;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#2F5D62;transition:width .4s}
+#sheet{position:fixed;inset:auto 0 0 0;max-width:480px;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -8px 30px #0004;transform:translateY(110%);transition:transform .35s;max-height:92vh;overflow:auto}
+#sheet.o{transform:none}
+.nums{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0}
+.nums button{background:#ECE5D8;color:#3b3a36;padding:14px 0;font-size:1.1rem}.nums button.s{background:#2F5D62;color:#fff;transform:scale(1.1)}
+.chips button{background:#E3E8E6;color:#3b4f52;padding:8px 12px;margin:3px 3px 0 0;font-weight:600;font-size:.9rem}
+textarea,input[type=text]{width:100%;border:2px solid #cfc6b8;border-radius:12px;padding:10px;font:inherit;margin-top:8px}
+.lo{border-left:6px solid #D64545}.hi{border-left:6px solid #2E9E6B}
+small{color:#7b6a66}.tip{margin:4px 0}.cite{font-size:.78rem;color:#7b6a66}
+.visit{background:#ECE5D8;border-radius:10px;padding:8px;font-size:.88rem;margin-top:6px}
+#ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#2F5D62;color:#fff;font-size:1.3rem;opacity:0;pointer-events:none;transition:opacity .35s;z-index:9;text-align:center;padding:20px}#ov.on{opacity:1;pointer-events:auto}#app.in>*{animation:up .5s both}@keyframes up{from{opacity:0;transform:translateY(16px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body><div id="app"></div><div id="sheet"></div><div id="ov"></div>
+<script>
+const BOOK=""; // paste booking link here (optional), e.g. "https://..."
+const PH="7010175334";
+const C=[
+['env','🏡','#5B8E9E',['Home & Surroundings','வீடு & சுற்றுப்புறம்'],['Home or hostel, study corner, peace and safety','வீடு/ஹாஸ்டல், படிக்கும் இடம், அமைதி']],
+['car','📚','#3F5E8C',['Academics & Career','படிப்பு & எதிர்காலம்'],['Marks, attendance, goals, placements','மதிப்பெண், ஹாஜர், இலக்கு, வேலை']],
+['fin','💸','#4E8F6B',['Money & Budget','பணம் & பட்ஜெட்'],['Pocket money, UPI spends, fees, savings','பாக்கெட் மணி, UPI செலவு, சேமிப்பு']],
+['hea','🧘','#C46B4A',['Health & Energy','ஆரோக்கியம் & சக்தி'],['Sleep, food, exercise, energy','தூக்கம், உணவு, உடற்பயிற்சி']],
+['fam','☕','#8A6D3B',['Family & Friends','குடும்பம் & நண்பர்கள்'],['Home people, close friends, canteen gang','வீட்டார், நெருங்கிய நண்பர்கள்']],
+['rom','🌹','#A8587A',['Love & Relationships','காதல் & உறவுகள்'],['Crush, partner or just feelings (single is fine)','காதல், உறவு (சிங்கிளும் ஓகே)']],
+['gro','🪷','#7A5C9E',['Growth & Skills','வளர்ச்சி & திறமை'],['Skills, confidence, habits, who you are becoming','திறமை, தன்னம்பிக்கை, பழக்கம்']],
+['fun','🎬','#D1912E',['Entertainment & Fun','சினிமா & பொழுதுபோக்கு'],['Movies, music, hobbies, rest, laughing','சினிமா, பாட்டு, பொழுதுபோக்கு']]];
+const T={
+env:["Your space might be draining you. Spend 20 minutes outside under a tree and tidy just one corner today. Small reset, big calm 🌿","Your space is working for you. Keep it cosy and keep it yours 🏡","உங்க இடம் உங்களை சோர்வடையச் செய்யலாம். இன்று 20 நிமிஷம் மரத்தடியில் இருங்க, ஒரு மூலையை மட்டும் சுத்தம் பண்ணுங்க 🌿","உங்க இடம் உங்களுக்கு உதவுது. அதை அப்படியே பாதுகாங்க 🏡"],
+car:["Big goals feel scary. Break them into tiny plans like: at 6 pm, I study 25 minutes. Small, doable, repeat 📚","You have direction and it shows. Keep the momentum, one day at a time 📚","பெரிய இலக்கு பயமா இருக்கும். மாலை 6 மணிக்கு 25 நிமிஷம் படிப்பேன் மாதிரி சின்ன திட்டமா பிரிங்க 📚","தெளிவான திசை இருக்கு. இப்படியே தொடருங்க 📚"],
+fin:["Money worry is super common. Note your spends for a week and set aside even ₹50. You will feel more in control 💪","You are handling money well. That is real calm in the bank 💸","பணக் கவலை எல்லோருக்கும் உண்டு. ஒரு வாரம் செலவை எழுதுங்க, ₹50 ஆவது சேமிங்க 💪","பணத்தை நல்லா கையாளுறீங்க. அது நிம்மதி 💸"],
+hea:["Your body is asking for a little care. Fix one wake-up time and walk 20 minutes daily. Sleep first, hustle later 😴","Your body is backing you up. Protect that sleep and energy 🧘","உடம்புக்கு கொஞ்சம் கவனம் தேவை. ஒரே நேரத்தில் எழுந்திருங்க, தினமும் 20 நிமிஷம் நடங்க 😴","உடம்பு உங்க பக்கம். தூக்கத்தையும் சக்தியையும் காப்பாத்துங்க 🧘"],
+fam:["Feeling distant happens to everyone. Send one message today: free for chai? Connection starts small ☕","Your people are your strength. Keep showing up for each other ☕","தூரமா தெரிவது சகஜம். இன்று ஒருத்தருக்கு டீ சாப்பிடலாமான்னு மெசேஜ் பண்ணுங்க ☕","உங்க மனிதர்கள் உங்க பலம். இப்படியே இணைந்திருங்க ☕"],
+rom:["Feelings can be tricky, whatever your status. Talk openly with someone you trust. You are not alone in this 💬","Warm connections matter, and yours are going well 🌹","உணர்வுகள் குழப்பமா இருக்கலாம். நம்பிக்கையானவரிடம் மனம் விட்டு பேசுங்க 💬","அன்பான உறவுகள் நல்லா இருக்கு 🌹"],
+gro:["You are allowed to be a work in progress! Learn one tiny new thing this week and say not yet instead of cannot 🌱","You are growing and it is lovely to see. Stay curious 🪷","நீங்க இன்னும் வளர்ந்துட்டிருக்கீங்க! இந்த வாரம் ஒரு சின்ன விஷயத்தை கத்துக்கங்க 🌱","நீங்க வளர்றீங்க, பார்க்க அழகா இருக்கு. ஆர்வத்தை விடாதீங்க 🪷"],
+fun:["All study, no play? Book 30 guilt-free minutes for a movie, music or a hobby this week. Rest counts as progress 🎬","You know how to enjoy life. Keep that joy going 🎬","படிப்பு மட்டுமா? இந்த வாரம் 30 நிமிஷம் படம், பாட்டு, பொழுதுபோக்குக்கு ஒதுக்குங்க 🎬","வாழ்க்கையை ரசிக்கத் தெரியுது. இந்த சந்தோஷம் தொடரட்டும் 🎬"]};
+const Q={env:"nature exposure and rumination (Bratman et al., 2015, PNAS); tidy spaces and focus",car:"implementation intentions / if-then planning (Gollwitzer & Sheeran, 2006 meta-analysis)",fin:"financial stress and mental health (Richardson et al., 2013 meta-analysis); simple budgeting habits",hea:"sleep and academic performance (Dewald et al., 2010); exercise for low mood (Schuch et al., 2016)",fam:"social connection and wellbeing (Holt-Lunstad et al., 2010)",rom:"relationship quality and long-term wellbeing (Harvard Study of Adult Development)",gro:"growth mindset interventions (Yeager et al., 2019, Nature)",fun:"leisure and subjective wellbeing (Kuykendall et al., 2015 meta-analysis)"};
+const S={
+rq:['Start again? Your current answers will be cleared.','மீண்டும் தொடங்கணுமா? தற்போதைய பதில்கள் அழிந்துவிடும்.'],
+m1:['Warming up your wheel… 🪷','உங்க வீலை தயார் பண்றோம்… 🪷'],m2:['Reading your wheel… ✨','உங்க வீலைப் படிக்கிறோம்… ✨'],
+grp:['🎓 All streams · 🚌 Day scholars · 🏠 Hostellers · 🌱 All years','🎓 எல்லா துறைகளும் · 🚌 டே ஸ்காலர் · 🏠 ஹாஸ்டல் · 🌱 எல்லா ஆண்டும்'],
+aff:['You showed up for yourself today, and that takes courage. Small steps count. You are always welcome at Anandhvan, Room F27 🪷','இன்று உங்களுக்காக நேரம் ஒதுக்கினீங்க, அது தைரியம். சின்ன அடிகளும் முக்கியம். Anandhvan, அறை F27-ல் எப்போதும் வரவேற்கிறோம் 🪷'],
+ai:['🤖 Copy AI prompt','🤖 AI ப்ராம்ப்ட் காப்பி'],copied:['✓ Copied! Paste in ChatGPT, Gemini or Claude','✓ காப்பி ஆச்சு! ChatGPT/Gemini/Claude-ல் ஒட்டுங்க'],
+title:['How round is your life right now? 🎡','உங்க வாழ்க்கை எவ்வளவு ரவுண்டா இருக்கு? 🎡'],
+hook:['2 mins · 8 taps · private · no login · works offline. Your data never leaves your phone.','2 நிமிஷம் · 8 டேப் · ரகசியம் · லாகின் வேண்டாம் · ஆஃப்லைனிலும் வேலை செய்யும்.'],
+start:['Let\'s roll ▶','தொடங்குவோம் ▶'],tap:['Tap a slice, give it 0–10 (0 = ouch, 10 = awesome)','ஒரு ஸ்லைஸைத் தொடுங்க; 0–10 மதிப்பு கொடுங்க'],
+done:['Done','முடிந்தது'],next:['Next ➜','அடுத்து ➜'],see:['See my wheel ✨','என் வீலைப் பார்க்க ✨'],
+score:['Score','மதிப்பு'],note:['Optional note…','குறிப்பு (விருப்பம்)…'],
+chips:[['Stressed','No time','Doing okay'],['டென்ஷன்','நேரம் இல்ல','பரவாயில்ல']],
+bal:['Wow, a nicely even wheel! 🎉 Keep nurturing every slice.','வாவ், சமமான வீல்! 🎉 எல்லா ஸ்லைஸையும் பார்த்துக்கங்க.'],
+lowT:['▼ Needs love','▼ கவனம் தேவை'],hiT:['▲ Shining','▲ பிரகாசம்'],
+dent:['Pick ONE dent to nudge this week (optional)','இந்த வாரம் ஒரு பள்ளத்தை சரிசெய்யலாமா? (விருப்பம்)'],skip:['Skip','தவிர்'],
+ok:['Your wheel isn\'t round yet, and that\'s normal. Most people\'s aren\'t! 😊','உங்க வீல் இன்னும் ரவுண்டு இல்ல; அது சகஜம்! 😊'],
+img1:['💾 Save wheel image','💾 வீல் படம்'],img2:['💾 Save feedback image','💾 ஃபீட்பேக் படம்'],redo:['Start again','மீண்டும்'],
+help:['For better help, visit <b>Room F27</b> (First Floor, Main Block) · 📞 <a href="tel:'+PH+'">'+PH+'</a> · 10 am–5 pm','மேலும் உதவிக்கு: <b>அறை F27</b> (முதல் தளம், மெயின் பிளாக்) · 📞 '+PH+' · காலை 10 – மாலை 5'],
+help2:['For better help, visit Room F27, First Floor, Main Block · Call '+PH+' · 10 am–5 pm','மேலும் உதவிக்கு: அறை F27, மெயின் பிளாக் · '+PH],
+book:['📅 Book a session','📅 நேரம் பதிவு'],tool:['A reflection tool, not a diagnosis. Anandhvan Wellness Centre, AMJ College.','இது சிந்தனைக்கான கருவி, நோய் கண்டறிதல் அல்ல.'],
+leave:['Leave this page? Your answers are saved on this phone.','பக்கத்தை விடணுமா? உங்க பதில்கள் இந்த போனில் சேமிக்கப்பட்டிருக்கு.'],
+nice:['Great job finishing!','சூப்பர், முடிச்சிட்டீங்க!']};
+let L=0,sc=Array(8).fill(null),nt=Array(8).fill(''),goal='',view='intro',cur=-1;
+try{const d=JSON.parse(localStorage.getItem('wol')||'null');if(d){sc=d.sc;nt=d.nt;L=d.L||0;goal=d.goal||'';view=d.view||'intro'}}catch(e){}
+const sv=()=>{try{localStorage.setItem('wol',JSON.stringify({sc,nt,L,goal,view}))}catch(e){}};
+const t=k=>S[k][L],$=s=>document.querySelector(s),N=()=>sc.filter(x=>x!==null).length;
+const P=(r,i)=>{const a=(-90+45*i-22.5)*Math.PI/180,b=a+Math.PI/4;return`M150 150L${150+r*Math.cos(a)} ${150+r*Math.sin(a)}A${r} ${r} 0 0 1 ${150+r*Math.cos(b)} ${150+r*Math.sin(b)}Z`};
+const X=(r,i)=>{const a=(-90+45*i)*Math.PI/180;return[150+r*Math.cos(a),150+r*Math.sin(a)]};
+function wheel(){let h='<svg class="w" viewBox="0 0 300 300"><circle cx="150" cy="150" r="140" fill="#fff"/>';
+C.forEach((c,i)=>{const s=sc[i],[x,y]=X(88,i);
+h+=`<g onclick="op(${i})" style="cursor:pointer"><path d="${P(135,i)}" fill="${c[2]}" opacity=".3" stroke="#fff" stroke-width="3" class="${s===null?'pulse':''}"/>`+(s!==null?`<path class="f" style="transform:scale(${s/10})" d="${P(135,i)}" fill="${c[2]}" stroke="#fff" stroke-width="2"/>`:'')+
+`<text x="${x}" y="${y}" font-size="24" text-anchor="middle">${c[1]}</text><text x="${x}" y="${y+16}" font-size="13" font-weight="700" fill="#3b2f2f" text-anchor="middle">${s===null?'?':s}</text></g>`});
+return h+'<circle cx="150" cy="150" r="22" fill="#fff"/><text x="150" y="157" font-size="18" text-anchor="middle">🎡</text></svg>'}
+function ana(){const o=sc.map((s,i)=>[s,i]).sort((a,b)=>a[0]-b[0]),mn=o[0][0],mx=o[7][0];if(mn===mx)return{bal:1,lo:[],hi:[]};
+const lt=o[1][0],ht=o[6][0];const lo=sc.map((s,i)=>s<=lt?i:-1).filter(i=>i>=0);const hi=sc.map((s,i)=>s>=ht&&s>lt?i:-1).filter(i=>i>=0);return{lo,hi}}
+function resSVG(){const a=ana();let h='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="900" height="900"><rect width="300" height="300" fill="#fff"/>';
+C.forEach((c,i)=>{h+=`<path d="${P(112,i)}" fill="${a.lo.includes(i)?'#D64545':a.hi.includes(i)?'#2E9E6B':c[2]}" opacity=".2" stroke="#fff" stroke-width="2"/>`});
+h+='<circle cx="150" cy="150" r="112" fill="none" stroke="#999" stroke-dasharray="3 3"/><circle cx="150" cy="150" r="56" fill="none" stroke="#ccc" stroke-dasharray="2 3"/>';
+const pts=sc.map((s,i)=>X(112*s/10,i));h+=`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="#2F5D62" fill-opacity=".25" stroke="#2F5D62" stroke-width="3" stroke-linejoin="round"/>`;
+C.forEach((c,i)=>{const l=a.lo.includes(i),g=a.hi.includes(i),col=l?'#D64545':g?'#2E9E6B':'#2F5D62',[x,y]=pts[i],[lx,ly]=X(133,i);
+h+=`<circle cx="${x}" cy="${y}" r="7" fill="${col}" stroke="#fff" stroke-width="2"/><text x="${lx}" y="${ly}" font-size="16" text-anchor="middle">${c[1]}</text><text x="${lx}" y="${ly+13}" font-size="10" font-weight="700" fill="${col}" text-anchor="middle">${l?'▼':g?'▲':''}${sc[i]}</text>`});
+return h+'</svg>'}
+function fbItems(){const a=ana();return[...a.lo.map(i=>[i,0]),...a.hi.map(i=>[i,1])]}
+function render(){const A=$('#app');let h=`<div class="top"><b>🎡 Wheel of Life</b><button class="g" onclick="L=1-L;sv();render()">${L?'English':'தமிழ்'}</button></div>`;
+if(view==='intro'){h+=`<h1>${t('title')}</h1><div class="card">${t('hook')}</div><p><small>${t('grp')}</small></p><div class="tilt">${wheel()}</div><button class="big" onclick="go('wheel',t('m1'))">${t('start')}</button>`}
+else if(view==='wheel'){const n=N();h+=`<p>${t('tap')}</p><div class="bar"><i style="width:${n*12.5}%"></i></div><small>${n}/8</small><div class="tilt">${wheel()}</div>`+(n===8?`<button class="big" onclick="go('res',t('m2'))">${t('see')}</button>`:'')}
+else{const a=ana(),f=fbItems();h+=`<h2>${t('nice')} 🎉</h2><div class="card">${resSVG().replace('width="900" height="900"','style="width:100%"')}<small>${t('lowT').replace('▼','🔴▼')} · ${t('hiT').replace('▲','🟢▲')}</small></div>`;
+h+=`<div class="card">${a.bal?t('bal'):t('ok')}</div>`;
+f.forEach(([i,k])=>{h+=`<div class="card ${k?'hi':'lo'}"><b>${C[i][1]} ${C[i][3][L]} · ${sc[i]}/10 ${k?'▲':'▼'}</b><p class="tip">${T[C[i][0]][k+2*L]}</p>${nt[i]?`<small>📝 ${nt[i].replace(/</g,'&lt;')}</small>`:''}<button class="g" onclick="cp(${i},${k},this)">${t('ai')}</button><div class="visit">${t('help')}</div></div>`});
+if(a.lo.length)h+=`<div class="card"><b>${t('dent')}</b><div class="chips">${a.lo.map(i=>`<button class="${goal===C[i][0]?'':'g'}" onclick="goal='${C[i][0]}';sv();render()">${C[i][1]} ${C[i][3][L]}</button>`).join('')}<button class="g" onclick="goal='';sv();render()">${t('skip')}</button></div></div>`;
+h+=`<div class="card"><b>📍 Anandhvan · Room F27, Main Block</b><p>${t('help')}</p>${BOOK?`<a href="${BOOK}"><button class="big">${t('book')}</button></a>`:''}</div><div class="card" style="background:#2F5D62;color:#fff"><b>${t('aff')}</b></div><button class="big" onclick="img(0)">${t('img1')}</button><button class="big" onclick="img(1)">${t('img2')}</button><button class="big g" onclick="if(confirm(t('rq'))){sc=Array(8).fill(null);nt=Array(8).fill('');goal='';view='wheel';sv();render()}">${t('redo')}</button><p><small>${t('tool')}</small></p>`}
+A.innerHTML=h}
+function op(i){cur=i;sh();$('#sheet').classList.add('o')}
+function sh(){const c=C[cur],s=$('#sheet');s.innerHTML=`<h2>${c[1]} ${c[3][L]}</h2><small>${c[4][L]}</small><div class="nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="${sc[cur]===n?'s':''}" onclick="pk(${n})">${n}</button>`).join('')}</div><div class="chips">${S.chips[L].map(x=>`<button onclick="ch('${x}')">${x}</button>`).join('')}</div><textarea id="nt" rows="2" placeholder="${t('note')}" oninput="nt[cur]=this.value;sv()">${nt[cur].replace(/</g,'&lt;')}</textarea><button class="big" onclick="nx()">${N()<8?t('next'):t('done')}</button>`}
+function pk(n){sc[cur]=n;sv();try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}sh();render()}
+function ch(x){const e=$('#nt');e.value=(e.value?e.value+', ':'')+x;nt[cur]=e.value;sv()}
+function nx(){const j=[1,2,3,4,5,6,7,8].map(k=>(cur+k)%8).find(i=>sc[i]===null);if(sc[cur]!==null&&j!==undefined){cur=j;sh()}else $('#sheet').classList.remove('o')}
+function wrap(x,s,w){const o=[];let l='';s.split(' ').forEach(wd=>{if(x.measureText(l+wd).width>w){o.push(l);l=''}l+=wd+' '});o.push(l);return o}
+function img(fb){const im=new Image();im.onload=()=>{const W=1080,m=50,tx=[];let g=document.createElement('canvas').getContext('2d');g.font='34px sans-serif';
+fbItems().forEach(([i,k])=>{if(fb)wrap(g,(k?'▲ ':'▼ ')+C[i][3][L]+' '+sc[i]+'/10: '+T[C[i][0]][k+2*L],W-2*m).forEach(l=>tx.push([l,k]))});
+const H=130+W+(fb?tx.length*46+90:0)+90,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);
+x.fillStyle='#3b2f2f';x.font='bold 46px sans-serif';x.fillText('My Wheel of Life 🎡',m,80);x.drawImage(im,0,110,W,W);x.font='34px sans-serif';let y=110+W+50;
+tx.forEach(([l,k])=>{x.fillStyle=k?'#2E9E6B':'#D64545';x.fillText(l,m,y);y+=46});
+x.fillStyle='#3b2f2f';x.font='bold 30px sans-serif';x.fillText(S.help2[0],m,H-30);
+const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='my-wheel-of-life.png';a.click()};
+im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(resSVG())}
+function go(v,m){const o=$('#ov');o.textContent=m||'';o.className='on';setTimeout(()=>{view=v;sv();render();scrollTo(0,0);const A=$('#app');A.className='in';o.className='';setTimeout(()=>A.className='',700)},m?900:300)}
+function cp(i,k,b){const n=C[i][3][0],p=`I am a college student in Chennai, India. On a 0-10 Wheel of Life I rated "${n}" ${sc[i]}/10 (${k?'one of my strongest areas':'one of my lowest areas'}). My note: ${nt[i]||'none'}. Using evidence-based research on: ${Q[C[i][0]]}, please give me a simple, low-cost 2-week plan with tiny daily steps${k?' to keep and use this strength':''}, tips for a student short on time and money, and a way to track progress. Be friendly and practical. Reply in ${L?'Tamil':'English'}. Also remind me that talking to my college counsellor (Room F27, Main Block) is a good idea.`;
+const ta=document.createElement('textarea');ta.value=p;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();try{navigator.clipboard.writeText(p)}catch(e){}b.textContent=t('copied')}
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+history.pushState({},'');addEventListener('popstate',()=>{if(confirm(t('leave')))history.back();else history.pushState({},'')});
+addEventListener('beforeunload',e=>{if(N()>0){e.preventDefault();e.returnValue=''}});
+if(view==='res'&&N()<8)view='wheel';render();
+</script></body></html>
